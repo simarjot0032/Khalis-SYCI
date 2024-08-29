@@ -1,42 +1,50 @@
 let micBtn = document.querySelector(".user-mic-btn");
 let recorder;
 let chunks = [];
-micBtn.addEventListener("click", async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  recorder = new MediaRecorder(stream);
-  recorder.ondataavailable = (e) => {
-    chunks.push(e.data);
-  };
-  recorder.onstop = async () => {
-    const audio = new Blob(chunks, { type: "audio/wav" });
-    console.log(audio);
 
-    chunks = [];
-    try {
+micBtn.addEventListener("click", async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+
+    recorder.onstop = async () => {
+      const audioBlob = new Blob(chunks, { type: "audio/mp3" });
+      const audioStream = audioBlob.stream();
+      chunks = [];
+
+      const api = "https://api.openai.com/v1/audio/transcriptions";
+      const Key = "api key";
       const formData = new FormData();
-      formData.append("file", audio, "recorded-audio.wav");
       formData.append("model", "whisper-1");
-      formData.append("language", "pa");
-      const transcript = await fetch(
-        "https://api.openai.com/v1/audio/transcriptions",
-        {
+      formData.append("file", audioBlob, "recording.mp3");
+      formData.append("prompt", "give output in indian punjabi");
+      formData.append(" response_format", "verbose_json");
+      try {
+        const response = await fetch(api, {
           method: "POST",
           headers: {
-            Authorization:
-              "Bearer  ",
+            Authorization: `Bearer ${Key}`,
           },
           body: formData,
+        });
+
+        if (!response.ok) {
+          console.error(response.status);
+        } else {
+          const data = await response.json();
+          console.log(data);
         }
-      );
-      if (!transcript.ok) {
-        console.log("error occured ");
+      } catch (e) {
+        console.error("Fetch error:", e.message);
       }
-      const data = await transcript.json();
-      console.log(data);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-  recorder.start();
-  setTimeout(() => recorder.stop(), 5000);
+    };
+
+    recorder.start();
+    setTimeout(() => recorder.stop(), 2000);
+  } catch (err) {
+    console.error("Error accessing media devices:", err);
+  }
 });

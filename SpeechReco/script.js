@@ -1,6 +1,7 @@
 let micBtn = document.querySelector(".user-mic-btn");
 let transcriptor = new webkitSpeechRecognition();
-transcriptor.lang = "pa-IN";
+transcriptor.lang = "pa-GURU-IN";
+console.log(transcriptor);
 let searchBox = document.querySelector("#user-search");
 micBtn.addEventListener("click", () => {
   transcriptor.start();
