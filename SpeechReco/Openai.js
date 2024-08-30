@@ -16,7 +16,6 @@ micBtn.addEventListener("click", async () => {
       const audioBlob = new Blob(chunks, { type: "audio/mp3" });
       const audioStream = audioBlob.stream();
       chunks = [];
-
       const api = "https://api.openai.com/v1/audio/transcriptions";
       const Key = "api key";
       const formData = new FormData();
