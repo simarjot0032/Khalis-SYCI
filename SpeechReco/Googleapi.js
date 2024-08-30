@@ -1,4 +1,5 @@
 let micBtn = document.querySelector(".user-mic-btn");
+let inputBox = document.querySelector("#user-search");
 let recorder;
 let result;
 let chunks = [];
@@ -11,8 +12,8 @@ micBtn.addEventListener("click", async () => {
   recorder.onstop = async () => {
     let audioBlog = new Blob(chunks, { type: "audio/wav" });
     chunks = [];
-    let audioFile = new File([audioBlog], "audio.wav");
-    if (audioFile) {
+
+    if (audioBlog) {
       let reader = new FileReader();
       reader.readAsDataURL(audioBlog);
       reader.addEventListener("load", async () => {
@@ -21,19 +22,20 @@ micBtn.addEventListener("click", async () => {
         const audio = {
           content: result,
         };
-        console.log(audio);
+        // console.log(audio);
         const config = {
-          encoding: "LINEAR16",
+          encoding: "WEBM_OPUS",
           sampleRateHertz: 48000,
-          languageCode: "en-US",
+          languageCode: "pa-In",
         };
         const request = {
           audio,
           config,
         };
         try {
-          let apiKey = "api key here";
+          let apiKey = "Your api key";
           let apiEndPoint = `https://speech.googleapis.com/v1/speech:recognize?key=${apiKey}`;
+          console.log(request);
           let response = await fetch(apiEndPoint, {
             method: "POST",
             headers: {
@@ -46,8 +48,9 @@ micBtn.addEventListener("click", async () => {
           } else {
             const data = await response.json();
             console.log(data);
+            inputBox.value = data.results[0].alternatives[0].transcript;
           }
-          console.log(audio);
+          // console.log(audio);
         } catch (e) {
           console.log(e.message);
         }
@@ -58,5 +61,5 @@ micBtn.addEventListener("click", async () => {
   setTimeout(() => {
     recorder.stop();
     console.log("recorder stopped");
-  }, 2000);
+  }, 5000);
 });

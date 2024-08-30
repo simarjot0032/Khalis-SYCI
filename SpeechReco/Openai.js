@@ -16,7 +16,7 @@ micBtn.addEventListener("click", async () => {
       chunks = [];
 
       const api = "https://api.openai.com/v1/audio/transcriptions";
-      const Key = "api key here";
+      const Key = "your api key";
       const formData = new FormData();
       formData.append("model", "whisper-1");
       formData.append("file", audioBlob, "recording.mp3");
