@@ -7,6 +7,8 @@
   height: 100vh;
   display: flex;
   align-items: center;
+  flex-direction: column;
+  gap: 10px;
   justify-content: center;
   background-color: #002244;
   padding: 18px;
@@ -40,4 +42,8 @@
   font-size: 1.2rem;
   color: white;
   cursor: pointer;
+}
+h1 {
+  color: whitesmoke;
+  font-family: Arial, Helvetica, sans-serif;
 }

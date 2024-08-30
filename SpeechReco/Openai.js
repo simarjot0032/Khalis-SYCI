@@ -1,5 +1,7 @@
 let micBtn = document.querySelector(".user-mic-btn");
 let recorder;
+let outputArray = [];
+
 let chunks = [];
 
 micBtn.addEventListener("click", async () => {
@@ -16,7 +18,7 @@ micBtn.addEventListener("click", async () => {
       chunks = [];
 
       const api = "https://api.openai.com/v1/audio/transcriptions";
-      const Key = "your api key";
+      const Key = "api key";
       const formData = new FormData();
       formData.append("model", "whisper-1");
       formData.append("file", audioBlob, "recording.mp3");
@@ -36,6 +38,7 @@ micBtn.addEventListener("click", async () => {
         } else {
           const data = await response.json();
           console.log(data);
+          outputArray.push(data);
         }
       } catch (e) {
         console.error("Fetch error:", e.message);
@@ -47,4 +50,12 @@ micBtn.addEventListener("click", async () => {
   } catch (err) {
     console.error("Error accessing media devices:", err);
   }
+});
+window.addEventListener("beforeunload", () => {
+  let outputFile = document.createElement("a");
+  let outputBlob = new Blob([outputArray], { type: "text/plain" });
+  let outputBlobLink = URL.createObjectURL(outputBlob);
+  outputFile.href = outputBlobLink;
+  outputFile.setAttribute("download", "Open");
+  outputFile.click();
 });
